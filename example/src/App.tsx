@@ -1,12 +1,21 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from 'react-native-en-voice-filter';
-
-const result = multiply(3, 7);
+import { View, StyleSheet } from 'react-native';
+import { VoiceRecorder } from '../../src/VoiceRecorder';
 
 export default function App() {
+
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+
+      <VoiceRecorder
+        micIconColor='white'
+        onRecordComplete={(path) => {
+          console.log("Recorded audio at:", path);
+        }}
+        onConfirm={(path) => {
+          console.log("Audio URL confirmed:", path);
+        }}
+      />
+
     </View>
   );
 }
@@ -14,7 +23,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#d4cacaff',
+    padding: 10,
   },
+
 });

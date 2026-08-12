@@ -16,6 +16,7 @@ buildscript {
   repositories {
     google()
     mavenCentral()
+    maven { url 'https://www.jitpack.io' }
   }
 
   dependencies {
@@ -48,4 +49,5 @@ android {
 
 dependencies {
   implementation "com.facebook.react:react-android"
+  implementation "com.github.waynejo:android-sonic:v1.0.0"
 }

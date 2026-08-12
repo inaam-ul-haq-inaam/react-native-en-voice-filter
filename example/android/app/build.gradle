@@ -9,13 +9,13 @@ apply plugin: "com.facebook.react"
 react {
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '../..'
-    // root = file("../../")
+    root = file("../../")
     //   The folder where the react-native NPM package is. Default is ../../node_modules/react-native
-    // reactNativeDir = file("../../node_modules/react-native")
+    reactNativeDir = file("../../../node_modules/react-native")
     //   The folder where the react-native Codegen package is. Default is ../../node_modules/@react-native/codegen
-    // codegenDir = file("../../node_modules/@react-native/codegen")
+    codegenDir = file("../../../node_modules/@react-native/codegen")
     //   The cli.js file which is the React Native CLI entrypoint. Default is ../../node_modules/react-native/cli.js
-    // cliFile = file("../../node_modules/react-native/cli.js")
+    cliFile = file("../../../node_modules/react-native/cli.js")
 
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
@@ -84,6 +84,13 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        
+        externalNativeBuild {
+            cmake {
+                // Workaround for Windows paths with spaces causing clang to drop libc++
+                arguments "-DCMAKE_SHARED_LINKER_FLAGS=-lc++_shared"
+            }
+        }
     }
     signingConfigs {
         debug {
@@ -117,3 +124,9 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+project.ext.vectoricons = [
+    iconFontNames: [ 'Ionicons.ttf' ],
+    iconFontsDir: "../../../node_modules/react-native-vector-icons/Fonts"
+]
+apply from: "../../../node_modules/react-native-vector-icons/fonts.gradle"
