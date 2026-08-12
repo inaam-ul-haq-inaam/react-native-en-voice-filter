@@ -3,7 +3,6 @@ package com.envoicefilter
 import android.media.MediaCodec
 import android.media.MediaExtractor
 import android.media.MediaFormat
-import com.waynejo.androidndkgif.Sonic
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -42,7 +41,7 @@ class AudioProcessor {
 
         val processed = when (filterType) {
             FilterType.ORIGINAL -> pcm
-            FilterType.ROBOT, FilterType.DEEP -> applySonic(pcm, filterType)
+            FilterType.ROBOT, FilterType.DEEP -> applyPitchShift(pcm, filterType)
             FilterType.ECHO -> applyEcho(pcm)
         }
 
@@ -53,46 +52,37 @@ class AudioProcessor {
     }
 
     // ------------------------------------------------------------------
-    // Sonic pitch/speed processing
+    // Pitch shifting via the official Sonic DSP library (local Java port)
     // ------------------------------------------------------------------
 
-    private fun applySonic(input: PcmAudio, type: FilterType): PcmAudio {
-        val sonic = Sonic(input.sampleRate, input.channelCount)
-        sonic.setSpeed(type.speed)
-        sonic.setPitch(type.pitch)
-        sonic.setRate(type.rate)
-
+    private fun applyPitchShift(input: PcmAudio, type: FilterType): PcmAudio {
         val inputShort = ByteBuffer.wrap(input.pcmBytes)
             .order(ByteOrder.LITTLE_ENDIAN)
             .asShortBuffer()
         val inputArr = ShortArray(inputShort.remaining())
         inputShort.get(inputArr)
 
-        // Feed input in chunks
-        val chunkSize = 4096
-        var offset = 0
-        while (offset < inputArr.size) {
-            val len = minOf(chunkSize, inputArr.size - offset)
-            sonic.writeShortToStream(inputArr, len)
-            offset += len
-        }
-        sonic.flush()
+        val sonic = Sonic(input.sampleRate, input.channelCount)
+        sonic.setSpeed(type.speed)
+        sonic.setPitch(type.pitch)
+        sonic.setRate(type.rate)
+        sonic.writeShortToStream(inputArr, inputArr.size)
+        sonic.flushStream()
 
-        val outBytes = java.io.ByteArrayOutputStream()
-        val outBuf = ShortArray(4096)
-        while (true) {
-            val received = sonic.readShortFromStream(outBuf, outBuf.size)
-            if (received <= 0) break
-            val bytes = ByteArray(received * 2)
-            ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
-                .asShortBuffer().put(outBuf, 0, received)
-            outBytes.write(bytes)
+        val outSamples = sonic.samplesAvailable()
+        val outBuf = ShortArray(outSamples)
+        if (outSamples > 0) {
+            sonic.readShortFromStream(outBuf, outSamples)
         }
+
+        val outBytes = ByteArray(outBuf.size * 2)
+        ByteBuffer.wrap(outBytes).order(ByteOrder.LITTLE_ENDIAN)
+            .asShortBuffer().put(outBuf)
 
         return PcmAudio(
             sampleRate = input.sampleRate,
             channelCount = input.channelCount,
-            pcmBytes = outBytes.toByteArray()
+            pcmBytes = outBytes
         )
     }
 
