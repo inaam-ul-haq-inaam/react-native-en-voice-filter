@@ -1,7 +1,7 @@
 {
   "name": "react-native-en-voice-filter",
   "version": "1.0.0",
-  "description": "for voice change",
+  "description": "A Real time react native voice filter",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
@@ -44,7 +44,8 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "voice-filter"
   ],
   "repository": {
     "type": "git",
