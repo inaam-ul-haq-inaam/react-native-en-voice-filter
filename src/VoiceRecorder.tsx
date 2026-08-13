@@ -22,6 +22,7 @@ export const VoiceRecorder = ({
     const [waveData, setWaveData] = useState<number[]>(new Array(15).fill(4));
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [recordedPath, setRecordedPath] = useState<string | null>(null);
+    const [showActions, setShowActions] = useState(false);
 
     const timerInterval = useRef<ReturnType<typeof setInterval> | null>(null);
     const waveInterval = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -105,8 +106,25 @@ export const VoiceRecorder = ({
         NativeVoiceFilter.cancelRecording();
     };
 
+    const handleDelete = () => {
+        setRecordedPath(null);
+        setShowActions(false);
+    };
+
+    const handleEdit = () => {
+        setShowActions(false);
+        setIsDrawerVisible(true);
+    };
+
+    const handleCancel = () => {
+        setShowActions(false);
+    };
+
     const handleConfirm = (path: string) => {
         console.log("Voice filter confirmed, audio path:", path);
+        setRecordedPath(path);
+        setIsDrawerVisible(false);
+        setShowActions(false);
         if (onConfirm) {
             onConfirm(path);
         }
@@ -117,12 +135,53 @@ export const VoiceRecorder = ({
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity
-                style={[styles.micButton, isRecording && styles.micButtonActive]}
-                onPress={isRecording ? undefined : startRecording}
-            >
-                <Icon name={micIconName} size={24} color={micIconColor} />
-            </TouchableOpacity>
+            {/* Default Mic - only shown when no audio attached */}
+            {recordedPath === null && (
+                <TouchableOpacity
+                    style={[styles.micButton, isRecording && styles.micButtonActive]}
+                    onPress={isRecording ? undefined : startRecording}
+                >
+                    <Icon name={micIconName} size={24} color={micIconColor} />
+                </TouchableOpacity>
+            )}
+
+            {/* Priority 1: Audio Attached - show music button instead of mic */}
+            {recordedPath !== null && !showActions && (
+                <TouchableOpacity
+                    style={[styles.micButton, styles.musicButton]}
+                    onPress={() => setShowActions(true)}
+                >
+                    <Text style={styles.musicIcon}>🎵</Text>
+                </TouchableOpacity>
+            )}
+
+            {/* Priority 2: Inline action menu */}
+            {recordedPath !== null && showActions && (
+                <View style={styles.tooltipContainer}>
+                    <View style={styles.triangle} />
+                    <View style={styles.activeLayout}>
+
+                        {/* Delete */}
+                        <TouchableOpacity style={styles.circleBtn} onPress={handleDelete}>
+                            <Text style={styles.actionIcon}>🗑️</Text>
+                        </TouchableOpacity>
+
+                        <View style={styles.divider} />
+
+                        {/* Edit */}
+                        <TouchableOpacity style={styles.circleBtn} onPress={handleEdit}>
+                            <Text style={styles.actionIcon}>✏️</Text>
+                        </TouchableOpacity>
+
+                        <View style={styles.divider} />
+
+                        {/* Cancel */}
+                        <TouchableOpacity style={styles.circleBtn} onPress={handleCancel}>
+                            <Text style={styles.actionIcon}>❌</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
 
             {isRecording && (
                 <View style={styles.tooltipContainer}>
@@ -176,6 +235,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#1A1A24',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    musicButton: {
+        backgroundColor: '#34C759',
+    },
+    musicIcon: {
+        fontSize: 20,
+    },
+    actionIcon: {
+        fontSize: 16,
     },
     micButtonActive: {
         backgroundColor: '#2A2A3A',
