@@ -23,6 +23,7 @@ export const VoiceRecorder = ({
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [recordedPath, setRecordedPath] = useState<string | null>(null);
     const [showActions, setShowActions] = useState(false);
+    const [selectedFilter, setSelectedFilter] = useState('Original');
 
     const timerInterval = useRef<ReturnType<typeof setInterval> | null>(null);
     const waveInterval = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -58,6 +59,7 @@ export const VoiceRecorder = ({
             }
         }
 
+        setSelectedFilter('Original');
         setIsRecording(true);
         NativeVoiceFilter.startRecording();
 
@@ -120,9 +122,10 @@ export const VoiceRecorder = ({
         setShowActions(false);
     };
 
-    const handleConfirm = (path: string) => {
-        console.log("Voice filter confirmed, audio path:", path);
+    const handleConfirm = (path: string, filter: string) => {
+        console.log("Voice filter confirmed, audio path:", path, "filter:", filter);
         setRecordedPath(path);
+        setSelectedFilter(filter);
         setIsDrawerVisible(false);
         setShowActions(false);
         if (onConfirm) {
@@ -215,6 +218,7 @@ export const VoiceRecorder = ({
             <AudioFilterDrawer 
                 visible={isDrawerVisible} 
                 audioPath={recordedPath} 
+                initialFilter={selectedFilter}
                 onClose={() => setIsDrawerVisible(false)} 
                 onConfirm={handleConfirm}
             />

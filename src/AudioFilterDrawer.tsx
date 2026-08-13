@@ -6,7 +6,8 @@ interface AudioFilterDrawerProps {
     visible: boolean;
     audioPath: string | null;
     onClose: () => void;
-    onConfirm?: (path: string) => void;
+    onConfirm?: (path: string, filter: string) => void;
+    initialFilter?: string;
 }
 
 const FILTER_OPTIONS = ['Original', 'Robot', 'Deep', 'Echo'];
@@ -18,7 +19,7 @@ const formatTime = (ms: number): string => {
     return `${m}:${s}`;
 };
 
-export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm }: AudioFilterDrawerProps) => {
+export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm, initialFilter = 'Original' }: AudioFilterDrawerProps) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentPosition, setCurrentPosition] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -66,7 +67,7 @@ export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm }: Au
             setCurrentPosition(0);
             setDuration(0);
             durationRef.current = 0;
-            setSelectedFilter('Original');
+            setSelectedFilter(initialFilter || 'Original');
             setFilteredPath(null);
             pathRef.current = null;
             setIsProcessing(false);
@@ -133,7 +134,7 @@ export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm }: Au
 
         const path = pathRef.current || audioPath;
         if (path && onConfirm) {
-            onConfirm(path);
+            onConfirm(path, selectedFilter);
         }
         onClose();
     };
