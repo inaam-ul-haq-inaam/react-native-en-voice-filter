@@ -1,6 +1,6 @@
 {
   "name": "react-native-en-voice-filter",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "for voice change",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
