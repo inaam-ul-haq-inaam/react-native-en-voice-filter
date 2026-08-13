@@ -52,7 +52,7 @@ export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm }: Au
                     }
                 }
             } catch (e) {
-                // ignore
+
             }
         }, 200);
         return () => clearInterval(interval);
@@ -127,7 +127,6 @@ export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm }: Au
         try {
             NativeVoiceFilter.stopPlayback();
         } catch (e) {
-            // ignore
         }
         isPlayingRef.current = false;
         setIsPlaying(false);
