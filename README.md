@@ -51,6 +51,14 @@ const styles = StyleSheet.create({
 | `onConfirm` | `(audioPath: string) => void` | `undefined` | Callback fired when the user confirms the final filtered audio. |
 | `micIconColor` | `string` | `'#8A58FF'` | Color of the microphone icon. |
 | `micIconName` | `string` | `'mic'` | Icon name (from `react-native-vector-icons/Ionicons`). |
+| `attachedIconName` | `string` | `'musical-notes'` | Icon name for the attached-audio (music) button. |
+| `attachedIconColor` | `string` | `'#FFFFFF'` | Color of the attached-audio icon. |
+| `attachedButtonColor` | `string` | `'#34C759'` | Background color of the attached-audio button. |
+| `deleteIconName` | `string` | `'trash'` | Icon name for the delete action button. |
+| `editIconName` | `string` | `'create'` | Icon name for the edit action button. |
+| `cancelIconName` | `string` | `'close'` | Icon name for the cancel action button. |
+| `actionIconColor` | `string` | `'#FFFFFF'` | Color of the action menu icons (delete/edit/cancel). |
+| `actionIconSize` | `number` | `18` | Size of the action menu icons. |
 
 ## Contributing
 

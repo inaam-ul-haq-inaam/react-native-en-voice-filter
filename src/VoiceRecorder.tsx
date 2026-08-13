@@ -9,13 +9,29 @@ interface VoiceRecorderProps {
     onConfirm?: (audioPath: string) => void;
     micIconColor?: string;
     micIconName?: string;
+    attachedIconName?: string;
+    attachedIconColor?: string;
+    attachedButtonColor?: string;
+    deleteIconName?: string;
+    editIconName?: string;
+    cancelIconName?: string;
+    actionIconColor?: string;
+    actionIconSize?: number;
 }
 
 export const VoiceRecorder = ({
     onRecordComplete,
     onConfirm,
     micIconColor = '#8A58FF',
-    micIconName = 'mic'
+    micIconName = 'mic',
+    attachedIconName = 'musical-notes',
+    attachedIconColor = '#FFFFFF',
+    attachedButtonColor = '#34C759',
+    deleteIconName = 'trash',
+    editIconName = 'create',
+    cancelIconName = 'close',
+    actionIconColor = '#FFFFFF',
+    actionIconSize = 18
 }: VoiceRecorderProps) => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTimeStr, setRecordingTimeStr] = useState('00:00');
@@ -151,10 +167,10 @@ export const VoiceRecorder = ({
             {/* Priority 1: Audio Attached - show music button instead of mic */}
             {recordedPath !== null && !showActions && (
                 <TouchableOpacity
-                    style={[styles.micButton, styles.musicButton]}
+                    style={[styles.micButton, { backgroundColor: attachedButtonColor }]}
                     onPress={() => setShowActions(true)}
                 >
-                    <Text style={styles.musicIcon}>🎵</Text>
+                    <Icon name={attachedIconName} size={22} color={attachedIconColor} />
                 </TouchableOpacity>
             )}
 
@@ -166,21 +182,21 @@ export const VoiceRecorder = ({
 
                         {/* Delete */}
                         <TouchableOpacity style={styles.circleBtn} onPress={handleDelete}>
-                            <Text style={styles.actionIcon}>🗑️</Text>
+                            <Icon name={deleteIconName} size={actionIconSize} color={actionIconColor} />
                         </TouchableOpacity>
 
                         <View style={styles.divider} />
 
                         {/* Edit */}
                         <TouchableOpacity style={styles.circleBtn} onPress={handleEdit}>
-                            <Text style={styles.actionIcon}>✏️</Text>
+                            <Icon name={editIconName} size={actionIconSize} color={actionIconColor} />
                         </TouchableOpacity>
 
                         <View style={styles.divider} />
 
                         {/* Cancel */}
                         <TouchableOpacity style={styles.circleBtn} onPress={handleCancel}>
-                            <Text style={styles.actionIcon}>❌</Text>
+                            <Icon name={cancelIconName} size={actionIconSize} color={actionIconColor} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -239,12 +255,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#1A1A24',
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    musicButton: {
-        backgroundColor: '#34C759',
-    },
-    musicIcon: {
-        fontSize: 20,
     },
     actionIcon: {
         fontSize: 16,
