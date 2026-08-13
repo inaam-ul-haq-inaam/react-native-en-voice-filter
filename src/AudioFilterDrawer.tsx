@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ActivityIndicator } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import NativeVoiceFilter from './NativeVoiceFilter';
 
 interface AudioFilterDrawerProps {
@@ -8,9 +9,19 @@ interface AudioFilterDrawerProps {
     onClose: () => void;
     onConfirm?: (path: string, filter: string) => void;
     initialFilter?: string;
+    playIconName?: string;
+    pauseIconName?: string;
+    closeIconName?: string;
+    confirmIconName?: string;
+    iconColor?: string;
+    accentColor?: string;
+    titleText?: string;
+    playerTitleText?: string;
+    processingText?: string;
+    filterOptions?: string[];
 }
 
-const FILTER_OPTIONS = ['Original', 'Robot', 'Deep', 'Echo'];
+const DEFAULT_FILTER_OPTIONS = ['Original', 'Robot', 'Deep', 'Echo'];
 
 const formatTime = (ms: number): string => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -19,7 +30,23 @@ const formatTime = (ms: number): string => {
     return `${m}:${s}`;
 };
 
-export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm, initialFilter = 'Original' }: AudioFilterDrawerProps) => {
+export const AudioFilterDrawer = ({
+    visible,
+    audioPath,
+    onClose,
+    onConfirm,
+    initialFilter = 'Original',
+    playIconName = 'play',
+    pauseIconName = 'pause',
+    closeIconName = 'close',
+    confirmIconName = 'checkmark',
+    iconColor = '#FFFFFF',
+    accentColor = '#8A58FF',
+    titleText = 'Voice Filters',
+    playerTitleText = 'Recorded Audio',
+    processingText = 'Applying filter...',
+    filterOptions = DEFAULT_FILTER_OPTIONS
+}: AudioFilterDrawerProps) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentPosition, setCurrentPosition] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -156,20 +183,20 @@ export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm, init
                 <View style={styles.drawerContainer}>
                     {/* Header */}
                     <View style={styles.header}>
-                        <Text style={styles.title}>Voice Filters</Text>
+                        <Text style={styles.title}>{titleText}</Text>
                         <TouchableOpacity onPress={onClose}>
-                            <Text style={styles.closeText}>✕</Text>
+                            <Icon name={closeIconName} size={20} color="#A0A0B0" />
                         </TouchableOpacity>
                     </View>
 
                     {/* Audio Player */}
                     <View style={styles.playerCard}>
-                        <TouchableOpacity style={styles.playButton} onPress={togglePlayback}>
-                            <Text style={styles.playIcon}>{isPlaying ? '⏸' : '▶'}</Text>
+                        <TouchableOpacity style={[styles.playButton, { backgroundColor: accentColor }]} onPress={togglePlayback}>
+                            <Icon name={isPlaying ? pauseIconName : playIconName} size={18} color={iconColor} />
                         </TouchableOpacity>
 
                         <View style={styles.playerInfo}>
-                            <Text style={styles.playerTitle}>Recorded Audio</Text>
+                            <Text style={styles.playerTitle}>{playerTitleText}</Text>
                             {/* Static Waveform */}
                             <View style={styles.fakeWaveform}>
                                 {[4, 8, 12, 16, 12, 8, 4, 8, 14, 18, 14, 8].map((h, i) => (
@@ -180,7 +207,7 @@ export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm, init
                         </View>
 
                         <TouchableOpacity style={styles.checkButton} onPress={handleConfirm}>
-                            <Text style={styles.checkIcon}>✓</Text>
+                            <Icon name={confirmIconName} size={18} color={iconColor} />
                         </TouchableOpacity>
                     </View>
 
@@ -188,15 +215,15 @@ export const AudioFilterDrawer = ({ visible, audioPath, onClose, onConfirm, init
                     <Text style={styles.sectionTitle}>Select Filter</Text>
                     {isProcessing && (
                         <View style={styles.processingRow}>
-                            <ActivityIndicator size="small" color="#8A58FF" />
-                            <Text style={styles.processingText}>Applying filter...</Text>
+                            <ActivityIndicator size="small" color={accentColor} />
+                            <Text style={[styles.processingText, { color: accentColor }]}>{processingText}</Text>
                         </View>
                     )}
                     <View style={styles.filtersContainer}>
-                        {FILTER_OPTIONS.map((filter, index) => (
+                        {filterOptions.map((filter, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={[styles.filterChip, selectedFilter === filter && styles.activeChip]}
+                                style={[styles.filterChip, selectedFilter === filter && { backgroundColor: accentColor }]}
                                 onPress={() => selectFilter(filter)}
                                 disabled={isProcessing}
                             >
@@ -239,10 +266,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    closeText: {
-        color: '#A0A0B0',
-        fontSize: 20,
-    },
     playerCard: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -259,10 +282,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 15,
-    },
-    playIcon: {
-        color: '#FFF',
-        fontSize: 18,
     },
     playerInfo: {
         flex: 1,
@@ -296,10 +315,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginLeft: 10,
     },
-    checkIcon: {
-        color: '#FFF',
-        fontSize: 18,
-    },
     sectionTitle: {
         color: '#A0A0B0',
         fontSize: 14,
@@ -316,9 +331,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginRight: 10,
         marginBottom: 10,
-    },
-    activeChip: {
-        backgroundColor: '#8A58FF',
     },
     chipText: {
         color: '#FFF',

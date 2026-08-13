@@ -8,9 +8,6 @@ export default function App() {
 
       <VoiceRecorder
         micIconColor='white'
-        onRecordComplete={(path) => {
-          console.log("Recorded audio at:", path);
-        }}
         onConfirm={(path) => {
           console.log("Audio URL confirmed:", path);
         }}

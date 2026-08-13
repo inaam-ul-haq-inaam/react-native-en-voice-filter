@@ -17,6 +17,16 @@ interface VoiceRecorderProps {
     cancelIconName?: string;
     actionIconColor?: string;
     actionIconSize?: number;
+    playIconName?: string;
+    pauseIconName?: string;
+    closeIconName?: string;
+    confirmIconName?: string;
+    iconColor?: string;
+    accentColor?: string;
+    titleText?: string;
+    playerTitleText?: string;
+    processingText?: string;
+    filterOptions?: string[];
 }
 
 export const VoiceRecorder = ({
@@ -31,7 +41,17 @@ export const VoiceRecorder = ({
     editIconName = 'create',
     cancelIconName = 'close',
     actionIconColor = '#FFFFFF',
-    actionIconSize = 18
+    actionIconSize = 18,
+    playIconName = 'play',
+    pauseIconName = 'pause',
+    closeIconName = 'close',
+    confirmIconName = 'checkmark',
+    iconColor = '#FFFFFF',
+    accentColor = '#8A58FF',
+    titleText = 'Voice Filters',
+    playerTitleText = 'Recorded Audio',
+    processingText = 'Applying filter...',
+    filterOptions = ['Original', 'Robot', 'Deep', 'Echo']
 }: VoiceRecorderProps) => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTimeStr, setRecordingTimeStr] = useState('00:00');
@@ -237,6 +257,16 @@ export const VoiceRecorder = ({
                 initialFilter={selectedFilter}
                 onClose={() => setIsDrawerVisible(false)} 
                 onConfirm={handleConfirm}
+                playIconName={playIconName}
+                pauseIconName={pauseIconName}
+                closeIconName={closeIconName}
+                confirmIconName={confirmIconName}
+                iconColor={iconColor}
+                accentColor={accentColor}
+                titleText={titleText}
+                playerTitleText={playerTitleText}
+                processingText={processingText}
+                filterOptions={filterOptions}
             />
         </View>
     );

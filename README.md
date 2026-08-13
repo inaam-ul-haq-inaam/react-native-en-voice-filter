@@ -59,6 +59,16 @@ const styles = StyleSheet.create({
 | `cancelIconName` | `string` | `'close'` | Icon name for the cancel action button. |
 | `actionIconColor` | `string` | `'#FFFFFF'` | Color of the action menu icons (delete/edit/cancel). |
 | `actionIconSize` | `number` | `18` | Size of the action menu icons. |
+| `playIconName` | `string` | `'play'` | Play icon name in the filter drawer. |
+| `pauseIconName` | `string` | `'pause'` | Pause icon name in the filter drawer. |
+| `closeIconName` | `string` | `'close'` | Close icon name in the filter drawer header. |
+| `confirmIconName` | `string` | `'checkmark'` | Confirm (tick) icon name in the filter drawer. |
+| `iconColor` | `string` | `'#FFFFFF'` | Color of the drawer icons (play/pause/confirm). |
+| `accentColor` | `string` | `'#8A58FF'` | Accent color for play button and active filter chip. |
+| `titleText` | `string` | `'Voice Filters'` | Title text of the filter drawer. |
+| `playerTitleText` | `string` | `'Recorded Audio'` | Player title text in the filter drawer. |
+| `processingText` | `string` | `'Applying filter...'` | Processing/loading text in the filter drawer. |
+| `filterOptions` | `string[]` | `['Original', 'Robot', 'Deep', 'Echo']` | List of filter options shown as chips. |
 
 ## Contributing
 
