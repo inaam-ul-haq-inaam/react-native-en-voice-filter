@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import NativeVoiceFilter from './NativeVoiceFilter';
 import { AudioFilterDrawer } from './AudioFilterDrawer';
 
+
 interface VoiceRecorderProps {
     onRecordComplete?: (audioPath: string) => void;
     onConfirm?: (audioPath: string) => void;
@@ -51,7 +52,7 @@ export const VoiceRecorder = ({
     titleText = 'Voice Filters',
     playerTitleText = 'Recorded Audio',
     processingText = 'Applying filter...',
-    filterOptions = ['Original', 'Robot', 'Deep', 'Echo']
+    filterOptions = ['Original', 'Robot', 'Deep', 'Echo', 'Chipmunk', 'Helium', 'Giant', 'Slow', 'Fast', 'Alien']
 }: VoiceRecorderProps) => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTimeStr, setRecordingTimeStr] = useState('00:00');
@@ -196,7 +197,16 @@ export const VoiceRecorder = ({
 
             {/* Priority 2: Inline action menu */}
             {recordedPath !== null && showActions && (
+                <View style={{position:'absolute',alignItems:'center',top:0}}>
+                    <TouchableOpacity
+                    style={[styles.micButton, { backgroundColor: attachedButtonColor }]}
+                    onPress={() => setShowActions(true)}
+                >
+                    <Icon name={attachedIconName} size={22} color={attachedIconColor} />
+                </TouchableOpacity>
+
                 <View style={styles.tooltipContainer}>
+                    
                     <View style={styles.triangle} />
                     <View style={styles.activeLayout}>
 
@@ -219,6 +229,7 @@ export const VoiceRecorder = ({
                             <Icon name={cancelIconName} size={actionIconSize} color={actionIconColor} />
                         </TouchableOpacity>
                     </View>
+                </View>
                 </View>
             )}
 

@@ -21,7 +21,7 @@ interface AudioFilterDrawerProps {
     filterOptions?: string[];
 }
 
-const DEFAULT_FILTER_OPTIONS = ['Original', 'Robot', 'Deep', 'Echo'];
+const DEFAULT_FILTER_OPTIONS = ['Original', 'Robot', 'Deep', 'Echo', 'Chipmunk', 'Helium', 'Giant', 'Slow', 'Fast', 'Alien'];
 
 const formatTime = (ms: number): string => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -98,6 +98,8 @@ export const AudioFilterDrawer = ({
             setFilteredPath(null);
             pathRef.current = null;
             setIsProcessing(false);
+
+            
         }
     }, [visible]);
 

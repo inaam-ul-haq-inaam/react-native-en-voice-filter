@@ -165,6 +165,12 @@ class EnVoiceFilterModule(private val reactContext: ReactApplicationContext) :
             "ROBOT" -> FilterType.ROBOT
             "DEEP" -> FilterType.DEEP
             "ECHO" -> FilterType.ECHO
+            "CHIPMUNK" -> FilterType.CHIPMUNK
+            "HELIUM" -> FilterType.HELIUM
+            "GIANT" -> FilterType.GIANT
+            "SLOW" -> FilterType.SLOW
+            "FAST" -> FilterType.FAST
+            "ALIEN" -> FilterType.ALIEN
             else -> FilterType.ORIGINAL
           }
 

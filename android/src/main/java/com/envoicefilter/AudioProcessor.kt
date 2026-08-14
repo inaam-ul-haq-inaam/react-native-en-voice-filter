@@ -15,7 +15,13 @@ enum class FilterType(val pitch: Float, val speed: Float, val rate: Float) {
     ORIGINAL(1.0f, 1.0f, 1.0f),
     ROBOT(1.9f, 1.0f, 1.0f),
     DEEP(0.6f, 0.9f, 0.9f),
-    ECHO(1.0f, 1.0f, 1.0f)
+    ECHO(1.0f, 1.0f, 1.0f),
+    CHIPMUNK(1.6f, 1.0f, 1.0f),
+    HELIUM(2.2f, 1.0f, 1.0f),
+    GIANT(0.5f, 0.9f, 0.9f),
+    SLOW(1.0f, 0.6f, 0.6f),
+    FAST(1.0f, 1.6f, 1.6f),
+    ALIEN(1.3f, 1.0f, 1.0f)
 }
 
 /**
@@ -41,8 +47,11 @@ class AudioProcessor {
 
         val processed = when (filterType) {
             FilterType.ORIGINAL -> pcm
-            FilterType.ROBOT, FilterType.DEEP -> applyPitchShift(pcm, filterType)
+            FilterType.ROBOT, FilterType.DEEP, FilterType.CHIPMUNK,
+            FilterType.HELIUM, FilterType.GIANT, FilterType.SLOW,
+            FilterType.FAST -> applyPitchShift(pcm, filterType)
             FilterType.ECHO -> applyEcho(pcm)
+            FilterType.ALIEN -> applyEcho(applyPitchShift(pcm, filterType))
         }
 
         val outputPath = File(inputPath).parent +
