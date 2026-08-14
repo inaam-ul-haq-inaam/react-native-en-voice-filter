@@ -12,6 +12,7 @@ export interface Spec extends TurboModule {
   isPlaying(): boolean;
   getCurrentPosition(): number;
   getDuration(): number;
+  getDurationFromPath(path: string): number;
   applyFilter(inputPath: string, filterType: string): Promise<string>;
 }
 

@@ -33,7 +33,7 @@ interface VoiceRecorderProps {
 export const VoiceRecorder = ({
     onRecordComplete,
     onConfirm,
-    micIconColor = '#8A58FF',
+    micIconColor = '#030109',
     micIconName = 'mic',
     attachedIconName = 'musical-notes',
     attachedIconColor = '#FFFFFF',
@@ -52,7 +52,7 @@ export const VoiceRecorder = ({
     titleText = 'Voice Filters',
     playerTitleText = 'Recorded Audio',
     processingText = 'Applying filter...',
-    filterOptions = ['Original', 'Robot', 'Deep', 'Echo', 'Chipmunk', 'Helium', 'Giant', 'Slow', 'Fast', 'Alien']
+    filterOptions = ['Original', 'Slow', 'Fast', 'Baby','Chipmunk', 'Deep', 'Anonymous', 'Robot', 'Echo']
 }: VoiceRecorderProps) => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTimeStr, setRecordingTimeStr] = useState('00:00');
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
         width: 44,
         height: 44,
         borderRadius: 22,
-        backgroundColor: '#1A1A24',
+        backgroundColor: '#cfcbc7',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     micButtonActive: {
-        backgroundColor: '#2A2A3A',
+        backgroundColor: '#dbdbe8',
     },
     tooltipContainer: {
         alignItems: 'center',

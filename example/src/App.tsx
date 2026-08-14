@@ -7,7 +7,7 @@ export default function App() {
     <View style={styles.container}>
 
       <VoiceRecorder
-        micIconColor='white'
+        
         onConfirm={(path) => {
           console.log("Audio URL confirmed:", path);
         }}

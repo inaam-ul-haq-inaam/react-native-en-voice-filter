@@ -21,7 +21,7 @@ interface AudioFilterDrawerProps {
     filterOptions?: string[];
 }
 
-const DEFAULT_FILTER_OPTIONS = ['Original', 'Robot', 'Deep', 'Echo', 'Chipmunk', 'Helium', 'Giant', 'Slow', 'Fast', 'Alien'];
+const DEFAULT_FILTER_OPTIONS = ['Original', 'Slow', 'Fast', 'Chipmunk', 'Baby', 'Deep', 'Anonymous', 'Robot', 'Echo'];
 
 const formatTime = (ms: number): string => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -99,7 +99,18 @@ export const AudioFilterDrawer = ({
             pathRef.current = null;
             setIsProcessing(false);
 
-            
+            // Fetch duration immediately from the audio file path
+            if (audioPath) {
+                try {
+                    const dur = NativeVoiceFilter.getDurationFromPath(audioPath);
+                    if (dur > 0) {
+                        durationRef.current = dur;
+                        setDuration(dur);
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
         }
     }, [visible]);
 

@@ -156,21 +156,33 @@ class EnVoiceFilterModule(private val reactContext: ReactApplicationContext) :
     }
   }
 
+  override fun getDurationFromPath(path: String): Double {
+    return try {
+      val player = MediaPlayer()
+      player.setDataSource(path)
+      player.prepare()
+      val duration = player.duration.toDouble()
+      player.release()
+      duration
+    } catch (e: Exception) {
+      0.0
+    }
+  }
+
   override fun applyFilter(inputPath: String, filterType: String, promise: Promise) {
     try {
       // Run audio processing off the main thread
       Thread {
         try {
           val type = when (filterType.uppercase()) {
-            "ROBOT" -> FilterType.ROBOT
-            "DEEP" -> FilterType.DEEP
-            "ECHO" -> FilterType.ECHO
-            "CHIPMUNK" -> FilterType.CHIPMUNK
-            "HELIUM" -> FilterType.HELIUM
-            "GIANT" -> FilterType.GIANT
             "SLOW" -> FilterType.SLOW
             "FAST" -> FilterType.FAST
-            "ALIEN" -> FilterType.ALIEN
+            "CHIPMUNK" -> FilterType.CHIPMUNK
+            "BABY" -> FilterType.BABY
+            "DEEP" -> FilterType.DEEP
+            "ANONYMOUS" -> FilterType.ANONYMOUS
+            "ROBOT" -> FilterType.ROBOT
+            "ECHO" -> FilterType.ECHO
             else -> FilterType.ORIGINAL
           }
 

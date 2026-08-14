@@ -11,17 +11,22 @@ import java.nio.ByteOrder
 /**
  * Supported voice filter types with their Sonic parameters.
  */
-enum class FilterType(val pitch: Float, val speed: Float, val rate: Float) {
+enum class FilterType(
+    val pitch: Float,
+    val speed: Float,
+    val rate: Float,
+    val volume: Float = 1.0f,
+    val useChordPitch: Boolean = false
+) {
     ORIGINAL(1.0f, 1.0f, 1.0f),
-    ROBOT(1.9f, 1.0f, 1.0f),
-    DEEP(0.6f, 0.9f, 0.9f),
-    ECHO(1.0f, 1.0f, 1.0f),
-    CHIPMUNK(1.6f, 1.0f, 1.0f),
-    HELIUM(2.2f, 1.0f, 1.0f),
-    GIANT(0.5f, 0.9f, 0.9f),
-    SLOW(1.0f, 0.6f, 0.6f),
-    FAST(1.0f, 1.6f, 1.6f),
-    ALIEN(1.3f, 1.0f, 1.0f)
+    SLOW(1.0f, 0.6f, 1.0f),
+    FAST(1.0f, 1.6f, 1.0f),
+    CHIPMUNK(1.8f, 1.2f, 1.0f),
+    BABY(1.5f, 0.9f, 1.0f),
+    DEEP(0.65f, 1.0f, 1.0f, 1.3f),
+    ANONYMOUS(0.85f, 0.95f, 1.0f),
+    ROBOT(0.9f, 0.9f, 1.0f, 1.0f, true),
+    ECHO(1.0f, 1.0f, 1.0f)
 }
 
 /**
@@ -47,11 +52,10 @@ class AudioProcessor {
 
         val processed = when (filterType) {
             FilterType.ORIGINAL -> pcm
-            FilterType.ROBOT, FilterType.DEEP, FilterType.CHIPMUNK,
-            FilterType.HELIUM, FilterType.GIANT, FilterType.SLOW,
-            FilterType.FAST -> applyPitchShift(pcm, filterType)
+            FilterType.SLOW, FilterType.FAST, FilterType.CHIPMUNK,
+            FilterType.BABY, FilterType.DEEP, FilterType.ANONYMOUS,
+            FilterType.ROBOT -> applyPitchShift(pcm, filterType)
             FilterType.ECHO -> applyEcho(pcm)
-            FilterType.ALIEN -> applyEcho(applyPitchShift(pcm, filterType))
         }
 
         val outputPath = File(inputPath).parent +
@@ -72,9 +76,21 @@ class AudioProcessor {
         inputShort.get(inputArr)
 
         val sonic = Sonic(input.sampleRate, input.channelCount)
-        sonic.setSpeed(type.speed)
+
+        // Reset engine state to defaults to prevent parameter bleeding
+        sonic.setPitch(1.0f)
+        sonic.setSpeed(1.0f)
+        sonic.setRate(1.0f)
+        sonic.setVolume(1.0f)
+        sonic.setChordPitch(false)
+
+        // Apply filter profile
         sonic.setPitch(type.pitch)
+        sonic.setSpeed(type.speed)
         sonic.setRate(type.rate)
+        sonic.setVolume(type.volume)
+        sonic.setChordPitch(type.useChordPitch)
+
         sonic.writeShortToStream(inputArr, inputArr.size)
         sonic.flushStream()
 
@@ -106,19 +122,33 @@ class AudioProcessor {
         val inputArr = ShortArray(inputShort.remaining())
         inputShort.get(inputArr)
 
-        val outputArr = ShortArray(inputArr.size)
-        val delaySamples = input.sampleRate / 2 // 500ms delay
-        val feedback = 0.45f
+        val delaySamples = (input.sampleRate * 0.25f).toInt() // 250ms delay
+        val feedback = 0.65f // strong echo decay so repeats are clearly audible
+        val tailLength = delaySamples * 3 // allow the echo tail to ring out after input ends
+        val outputArr = ShortArray(inputArr.size + tailLength)
 
+        // Process the input samples with echo feedback
         for (i in inputArr.indices) {
             var value = inputArr[i].toFloat()
             val delayIndex = i - delaySamples
             if (delayIndex >= 0) {
                 value += outputArr[delayIndex] * feedback
             }
-            outputArr[i] = value.toInt()
-                .coerceIn(Short.MIN_VALUE.toInt(), Short.MAX_VALUE.toInt())
-                .toShort()
+            outputArr[i] = value
+                .coerceIn(Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat())
+                .toInt().toShort()
+        }
+
+        // Let the echo tail ring out to the end of the extended buffer
+        for (i in inputArr.size until outputArr.size) {
+            var value = 0f
+            val delayIndex = i - delaySamples
+            if (delayIndex >= 0) {
+                value = outputArr[delayIndex] * feedback
+            }
+            outputArr[i] = value
+                .coerceIn(Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat())
+                .toInt().toShort()
         }
 
         val outBytes = ByteArray(outputArr.size * 2)
