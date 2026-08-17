@@ -19,6 +19,17 @@ interface AudioFilterDrawerProps {
     playerTitleText?: string;
     processingText?: string;
     filterOptions?: string[];
+    drawerBackgroundColor?: string;
+    playerCardColor?: string;
+    filterChipColor?: string;
+    checkButtonColor?: string;
+    waveformColor?: string;
+    titleColor?: string;
+    playerTitleColor?: string;
+    sectionTitleColor?: string;
+    timerTextColor?: string;
+    closeIconColor?: string;
+    overlayColor?: string;
 }
 
 const DEFAULT_FILTER_OPTIONS = ['Original', 'Slow', 'Fast', 'Chipmunk', 'Baby', 'Robot', 'Echo', 'Hacker'];
@@ -45,7 +56,18 @@ export const AudioFilterDrawer = ({
     titleText = 'Voice Filters',
     playerTitleText = 'Recorded Audio',
     processingText = 'Applying filter...',
-    filterOptions = DEFAULT_FILTER_OPTIONS
+    filterOptions = DEFAULT_FILTER_OPTIONS,
+    drawerBackgroundColor = '#1E1E2D',
+    playerCardColor = '#2A2A3A',
+    filterChipColor = '#2A2A3A',
+    checkButtonColor = '#3A3A4A',
+    waveformColor = '#8A58FF',
+    titleColor = '#FFF',
+    playerTitleColor = '#FFF',
+    sectionTitleColor = '#A0A0B0',
+    timerTextColor = '#A0A0B0',
+    closeIconColor = '#A0A0B0',
+    overlayColor = 'rgba(0,0,0,0.5)'
 }: AudioFilterDrawerProps) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentPosition, setCurrentPosition] = useState(0);
@@ -99,7 +121,7 @@ export const AudioFilterDrawer = ({
             pathRef.current = null;
             setIsProcessing(false);
 
-            // Fetch duration immediately from the audio file path
+            // Fetch duration of Audio 
             if (audioPath) {
                 try {
                     const dur = NativeVoiceFilter.getDurationFromPath(audioPath);
@@ -190,42 +212,42 @@ export const AudioFilterDrawer = ({
             animationType="slide"
             onRequestClose={onClose}
         >
-            <View style={styles.overlay}>
+            <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
                 <TouchableOpacity style={styles.backgroundTouch} onPress={onClose} />
 
-                <View style={styles.drawerContainer}>
+                <View style={[styles.drawerContainer, { backgroundColor: drawerBackgroundColor }]}>
                     {/* Header */}
                     <View style={styles.header}>
-                        <Text style={styles.title}>{titleText}</Text>
+                        <Text style={[styles.title, { color: titleColor }]}>{titleText}</Text>
                         <TouchableOpacity onPress={onClose}>
-                            <Icon name={closeIconName} size={20} color="#A0A0B0" />
+                            <Icon name={closeIconName} size={20} color={closeIconColor} />
                         </TouchableOpacity>
                     </View>
 
                     {/* Audio Player */}
-                    <View style={styles.playerCard}>
+                    <View style={[styles.playerCard, { backgroundColor: playerCardColor }]}>
                         <TouchableOpacity style={[styles.playButton, { backgroundColor: accentColor }]} onPress={togglePlayback}>
                             <Icon name={isPlaying ? pauseIconName : playIconName} size={18} color={iconColor} />
                         </TouchableOpacity>
 
                         <View style={styles.playerInfo}>
-                            <Text style={styles.playerTitle}>{playerTitleText}</Text>
+                            <Text style={[styles.playerTitle, { color: playerTitleColor }]}>{playerTitleText}</Text>
                             {/* Static Waveform */}
                             <View style={styles.fakeWaveform}>
                                 {[4, 8, 12, 16, 12, 8, 4, 8, 14, 18, 14, 8].map((h, i) => (
-                                    <View key={i} style={[styles.waveBar, { height: h }]} />
+                                    <View key={i} style={[styles.waveBar, { height: h, backgroundColor: waveformColor }]} />
                                 ))}
-                                <Text style={styles.timerText}>{displayTime}</Text>
+                                <Text style={[styles.timerText, { color: timerTextColor }]}>{displayTime}</Text>
                             </View>
                         </View>
 
-                        <TouchableOpacity style={styles.checkButton} onPress={handleConfirm}>
+                        <TouchableOpacity style={[styles.checkButton, { backgroundColor: checkButtonColor }]} onPress={handleConfirm}>
                             <Icon name={confirmIconName} size={18} color={iconColor} />
                         </TouchableOpacity>
                     </View>
 
-                    {/* Filter Chips */}
-                    <Text style={styles.sectionTitle}>Select Filter</Text>
+                    {/* Filter*/}
+                    <Text style={[styles.sectionTitle, { color: sectionTitleColor }]}>Select Filter</Text>
                     {isProcessing && (
                         <View style={styles.processingRow}>
                             <ActivityIndicator size="small" color={accentColor} />
@@ -236,7 +258,11 @@ export const AudioFilterDrawer = ({
                         {filterOptions.map((filter, index) => (
                             <TouchableOpacity
                                 key={index}
-                                style={[styles.filterChip, selectedFilter === filter && { backgroundColor: accentColor }]}
+                                style={[
+                                    styles.filterChip,
+                                    { backgroundColor: filterChipColor },
+                                    selectedFilter === filter && { backgroundColor: accentColor }
+                                ]}
                                 onPress={() => selectFilter(filter)}
                                 disabled={isProcessing}
                             >
@@ -256,13 +282,11 @@ const styles = StyleSheet.create({
     overlay: {
         flex: 1,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     backgroundTouch: {
         flex: 1,
     },
     drawerContainer: {
-        backgroundColor: '#1E1E2D',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,
@@ -275,14 +299,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        color: '#FFF',
         fontSize: 18,
         fontWeight: 'bold',
     },
     playerCard: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#2A2A3A',
         borderRadius: 15,
         padding: 15,
         marginBottom: 20,
@@ -291,7 +313,6 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#8A58FF',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 15,
@@ -300,7 +321,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     playerTitle: {
-        color: '#FFF',
         fontSize: 14,
         marginBottom: 5,
     },
@@ -310,12 +330,10 @@ const styles = StyleSheet.create({
     },
     waveBar: {
         width: 2,
-        backgroundColor: '#8A58FF',
         marginHorizontal: 1.5,
         borderRadius: 1,
     },
     timerText: {
-        color: '#A0A0B0',
         fontSize: 12,
         marginLeft: 10,
     },
@@ -323,13 +341,11 @@ const styles = StyleSheet.create({
         width: 36,
         height: 36,
         borderRadius: 18,
-        backgroundColor: '#3A3A4A',
         justifyContent: 'center',
         alignItems: 'center',
         marginLeft: 10,
     },
     sectionTitle: {
-        color: '#A0A0B0',
         fontSize: 14,
         marginBottom: 10,
     },
@@ -338,7 +354,6 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     filterChip: {
-        backgroundColor: '#2A2A3A',
         paddingHorizontal: 15,
         paddingVertical: 8,
         borderRadius: 20,
@@ -358,7 +373,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     processingText: {
-        color: '#8A58FF',
         marginLeft: 8,
         fontSize: 13,
     },

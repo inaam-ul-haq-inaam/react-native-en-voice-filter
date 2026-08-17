@@ -28,6 +28,26 @@ interface VoiceRecorderProps {
     playerTitleText?: string;
     processingText?: string;
     filterOptions?: string[];
+    drawerBackgroundColor?: string;
+    playerCardColor?: string;
+    filterChipColor?: string;
+    checkButtonColor?: string;
+    waveformColor?: string;
+    titleColor?: string;
+    playerTitleColor?: string;
+    sectionTitleColor?: string;
+    timerTextColor?: string;
+    closeIconColor?: string;
+    overlayColor?: string;
+    micButtonColor?: string;
+    micButtonActiveColor?: string;
+    tooltipBackgroundColor?: string;
+    recordingWaveColor?: string;
+    recordingTimerColor?: string;
+    actionButtonColor?: string;
+    cancelIconColor?: string;
+    dividerColor?: string;
+    stopButtonColor?: string;
 }
 
 export const VoiceRecorder = ({
@@ -43,16 +63,16 @@ export const VoiceRecorder = ({
     cancelIconName = 'close',
     actionIconColor = '#FFFFFF',
     actionIconSize = 18,
-    playIconName = 'play',
-    pauseIconName = 'pause',
-    closeIconName = 'close',
-    confirmIconName = 'checkmark',
-    iconColor = '#FFFFFF',
-    accentColor = '#8A58FF',
-    titleText = 'Voice Filters',
-    playerTitleText = 'Recorded Audio',
-    processingText = 'Applying filter...',
-    filterOptions = ['Original', 'Slow', 'Fast', 'Baby','Chipmunk', 'Robot', 'Echo', 'Hacker']
+    micButtonColor = '#cfcbc7',
+    micButtonActiveColor = '#dbdbe8',
+    tooltipBackgroundColor = '#1A1A24',
+    recordingWaveColor = '#FF3B30',
+    recordingTimerColor = '#FF3B30',
+    actionButtonColor = '#282834',
+    cancelIconColor = '#A0A0B0',
+    dividerColor = '#3A3A4A',
+    stopButtonColor = '#FF3B30',
+    ...drawerProps
 }: VoiceRecorderProps) => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTimeStr, setRecordingTimeStr] = useState('00:00');
@@ -175,17 +195,17 @@ export const VoiceRecorder = ({
 
     return (
         <View style={styles.container}>
-            {/* Default Mic - only shown when no audio attached */}
+            {/* Default Mic*/}
             {recordedPath === null && (
                 <TouchableOpacity
-                    style={[styles.micButton, isRecording && styles.micButtonActive]}
+                    style={[styles.micButton, { backgroundColor: micButtonColor }, isRecording && { backgroundColor: micButtonActiveColor }]}
                     onPress={isRecording ? undefined : startRecording}
                 >
                     <Icon name={micIconName} size={24} color={micIconColor} />
                 </TouchableOpacity>
             )}
 
-            {/* Priority 1: Audio Attached - show music button instead of mic */}
+            {/*Audio Attached*/}
             {recordedPath !== null && !showActions && (
                 <TouchableOpacity
                     style={[styles.micButton, { backgroundColor: attachedButtonColor }]}
@@ -195,7 +215,7 @@ export const VoiceRecorder = ({
                 </TouchableOpacity>
             )}
 
-            {/* Priority 2: Inline action menu */}
+            {/* Inline action menu */}
             {recordedPath !== null && showActions && (
                 <View style={{position:'absolute',alignItems:'center',top:0}}>
                     <TouchableOpacity
@@ -207,25 +227,25 @@ export const VoiceRecorder = ({
 
                 <View style={styles.tooltipContainer}>
                     
-                    <View style={styles.triangle} />
-                    <View style={styles.activeLayout}>
+                    <View style={[styles.triangle, { borderBottomColor: tooltipBackgroundColor }]} />
+                    <View style={[styles.activeLayout, { backgroundColor: tooltipBackgroundColor }]}>
 
                         {/* Delete */}
-                        <TouchableOpacity style={styles.circleBtn} onPress={handleDelete}>
+                        <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleDelete}>
                             <Icon name={deleteIconName} size={actionIconSize} color={actionIconColor} />
                         </TouchableOpacity>
 
-                        <View style={styles.divider} />
+                        <View style={[styles.divider, { backgroundColor: dividerColor }]} />
 
                         {/* Edit */}
-                        <TouchableOpacity style={styles.circleBtn} onPress={handleEdit}>
+                        <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleEdit}>
                             <Icon name={editIconName} size={actionIconSize} color={actionIconColor} />
                         </TouchableOpacity>
 
-                        <View style={styles.divider} />
+                        <View style={[styles.divider, { backgroundColor: dividerColor }]} />
 
                         {/* Cancel */}
-                        <TouchableOpacity style={styles.circleBtn} onPress={handleCancel}>
+                        <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleCancel}>
                             <Icon name={cancelIconName} size={actionIconSize} color={actionIconColor} />
                         </TouchableOpacity>
                     </View>
@@ -235,49 +255,40 @@ export const VoiceRecorder = ({
 
             {isRecording && (
                 <View style={styles.tooltipContainer}>
-                    <View style={styles.triangle} />
-                    <View style={styles.activeLayout}>
+                    <View style={[styles.triangle, { borderBottomColor: tooltipBackgroundColor }]} />
+                    <View style={[styles.activeLayout, { backgroundColor: tooltipBackgroundColor }]}>
 
                         {/* Real-time Waveform */}
                         <View style={styles.waveform}>
                             {waveData.map((h, i) => (
-                                <View key={i} style={[styles.waveBar, { height: h }]} />
+                                <View key={i} style={[styles.waveBar, { height: h, backgroundColor: recordingWaveColor }]} />
                             ))}
                         </View>
 
-                        <Text style={styles.timerText}>{recordingTimeStr}</Text>
+                        <Text style={[styles.timerText, { color: recordingTimerColor }]}>{recordingTimeStr}</Text>
 
                         {/* Cancel Button */}
-                        <TouchableOpacity style={styles.circleBtn} onPress={cancelRecording}>
-                            <Text style={styles.cancelIcon}>✕</Text>
+                        <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={cancelRecording}>
+                            <Text style={[styles.cancelIcon, { color: cancelIconColor }]}>✕</Text>
                         </TouchableOpacity>
 
-                        <View style={styles.divider} />
+                        <View style={[styles.divider, { backgroundColor: dividerColor }]} />
 
                         {/* Stop Button */}
-                        <TouchableOpacity style={styles.circleBtn} onPress={stopRecording}>
-                            <View style={styles.stopSquare} />
+                        <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={stopRecording}>
+                            <View style={[styles.stopSquare, { backgroundColor: stopButtonColor }]} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
 
-            <AudioFilterDrawer 
-                visible={isDrawerVisible} 
-                audioPath={recordedPath} 
+            <AudioFilterDrawer
+                {...drawerProps}
+                visible={isDrawerVisible}
+                audioPath={recordedPath}
                 initialFilter={selectedFilter}
-                onClose={() => setIsDrawerVisible(false)} 
+                onClose={() => setIsDrawerVisible(false)}
                 onConfirm={handleConfirm}
-                playIconName={playIconName}
-                pauseIconName={pauseIconName}
-                closeIconName={closeIconName}
-                confirmIconName={confirmIconName}
-                iconColor={iconColor}
-                accentColor={accentColor}
-                titleText={titleText}
-                playerTitleText={playerTitleText}
-                processingText={processingText}
-                filterOptions={filterOptions}
             />
         </View>
     );

@@ -69,6 +69,26 @@ const styles = StyleSheet.create({
 | `playerTitleText` | `string` | `'Recorded Audio'` | Player title text in the filter drawer. |
 | `processingText` | `string` | `'Applying filter...'` | Processing/loading text in the filter drawer. |
 | `filterOptions` | `string[]` | `['Original', 'Slow', 'Fast', 'Chipmunk', 'Baby', 'Robot', 'Echo', 'Hacker']` | List of filter options shown as chips. |
+| `drawerBackgroundColor` | `string` | `'#1E1E2D'` | Background color of the filter drawer container. |
+| `playerCardColor` | `string` | `'#2A2A3A'` | Background color of the audio player card. |
+| `filterChipColor` | `string` | `'#2A2A3A'` | Background color of unselected filter chips. |
+| `checkButtonColor` | `string` | `'#3A3A4A'` | Background color of the confirm (tick) button. |
+| `waveformColor` | `string` | `'#8A58FF'` | Color of the waveform bars in the player. |
+| `titleColor` | `string` | `'#FFF'` | Color of the drawer title text. |
+| `playerTitleColor` | `string` | `'#FFF'` | Color of the player title text. |
+| `sectionTitleColor` | `string` | `'#A0A0B0'` | Color of the "Select Filter" section title. |
+| `timerTextColor` | `string` | `'#A0A0B0'` | Color of the timer text in the player. |
+| `closeIconColor` | `string` | `'#A0A0B0'` | Color of the close icon in the drawer header. |
+| `overlayColor` | `string` | `'rgba(0,0,0,0.5)'` | Background color of the modal overlay behind the drawer. |
+| `micButtonColor` | `string` | `'#cfcbc7'` | Background color of the mic button. |
+| `micButtonActiveColor` | `string` | `'#dbdbe8'` | Background color of the mic button while recording. |
+| `tooltipBackgroundColor` | `string` | `'#1A1A24'` | Background color of the recording/action tooltip. |
+| `recordingWaveColor` | `string` | `'#FF3B30'` | Color of the real-time recording waveform bars. |
+| `recordingTimerColor` | `string` | `'#FF3B30'` | Color of the recording timer text. |
+| `actionButtonColor` | `string` | `'#282834'` | Background color of the action circle buttons (delete/edit/cancel/stop). |
+| `cancelIconColor` | `string` | `'#A0A0B0'` | Color of the cancel (✕) icon. |
+| `dividerColor` | `string` | `'#3A3A4A'` | Color of the divider lines in the tooltip. |
+| `stopButtonColor` | `string` | `'#FF3B30'` | Color of the stop square button. |
 
 ## Contributing
 
