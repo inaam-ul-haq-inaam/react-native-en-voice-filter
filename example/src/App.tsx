@@ -7,10 +7,11 @@ export default function App() {
     <View style={styles.container}>
 
       <VoiceRecorder
-        
         onConfirm={(path) => {
           console.log("Audio URL confirmed:", path);
-        }}
+
+          }}
+
       />
 
     </View>
