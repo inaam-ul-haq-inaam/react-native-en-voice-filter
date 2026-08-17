@@ -21,12 +21,11 @@ enum class FilterType(
     ORIGINAL(1.0f, 1.0f, 1.0f),
     SLOW(1.0f, 0.6f, 1.0f),
     FAST(1.0f, 1.6f, 1.0f),
-    CHIPMUNK(1.8f, 1.2f, 1.0f),
-    BABY(1.5f, 0.9f, 1.0f),
-    DEEP(0.65f, 1.0f, 1.0f, 1.3f),
-    ANONYMOUS(0.85f, 0.95f, 1.0f),
+    CHIPMUNK(2.5f, 1.5f, 1.0f),
+    BABY(2.0f, 1.0f, 1.0f),
     ROBOT(0.9f, 0.9f, 1.0f, 1.0f, true),
-    ECHO(1.0f, 1.0f, 1.0f)
+    ECHO(1.0f, 1.0f, 1.0f),
+    HACKER(0.7f, 1.0f, 1.0f)
 }
 
 /**
@@ -53,9 +52,10 @@ class AudioProcessor {
         val processed = when (filterType) {
             FilterType.ORIGINAL -> pcm
             FilterType.SLOW, FilterType.FAST, FilterType.CHIPMUNK,
-            FilterType.BABY, FilterType.DEEP, FilterType.ANONYMOUS,
-            FilterType.ROBOT -> applyPitchShift(pcm, filterType)
+            FilterType.BABY -> applyPitchShift(pcm, filterType)
+            FilterType.ROBOT -> applyRobot(pcm)
             FilterType.ECHO -> applyEcho(pcm)
+            FilterType.HACKER -> applyHacker(pcm)
         }
 
         val outputPath = File(inputPath).parent +
@@ -107,6 +107,80 @@ class AudioProcessor {
         return PcmAudio(
             sampleRate = input.sampleRate,
             channelCount = input.channelCount,
+            pcmBytes = outBytes
+        )
+    }
+
+    // ------------------------------------------------------------------
+    // Hacker effect: pitch down + bitcrusher (quantization distortion)
+    // ------------------------------------------------------------------
+
+    private fun applyHacker(input: PcmAudio): PcmAudio {
+        // Stage 1: Pitch down using Sonic (deep, anonymous voice)
+        val pitchShifted = applyPitchShift(input, FilterType.HACKER)
+
+        // Stage 2: Bitcrush - quantize 16-bit samples to 8-bit resolution
+        val inputShort = ByteBuffer.wrap(pitchShifted.pcmBytes)
+            .order(ByteOrder.LITTLE_ENDIAN)
+            .asShortBuffer()
+        val samples = ShortArray(inputShort.remaining())
+        inputShort.get(samples)
+
+        val step = 256 // 2^(16-8) = 8-bit resolution
+        for (i in samples.indices) {
+            val quantized = (Math.round(samples[i] / step.toFloat()) * step)
+                .coerceIn(Short.MIN_VALUE.toInt(), Short.MAX_VALUE.toInt())
+            samples[i] = quantized.toShort()
+        }
+
+        val outBytes = ByteArray(samples.size * 2)
+        ByteBuffer.wrap(outBytes).order(ByteOrder.LITTLE_ENDIAN)
+            .asShortBuffer().put(samples)
+
+        return PcmAudio(
+            sampleRate = pitchShifted.sampleRate,
+            channelCount = pitchShifted.channelCount,
+            pcmBytes = outBytes
+        )
+    }
+
+    // ------------------------------------------------------------------
+    // Robot effect: slight pitch shift + ring modulator (40 Hz carrier)
+    // ------------------------------------------------------------------
+
+    private fun applyRobot(input: PcmAudio): PcmAudio {
+        // Stage 1: Slight pitch-down for robotic depth (existing Sonic params)
+        val pitched = applyPitchShift(input, FilterType.ROBOT)
+
+        // Stage 2: Ring modulator - multiply samples by a 40 Hz sine-wave LFO
+        val inputShort = ByteBuffer.wrap(pitched.pcmBytes)
+            .order(ByteOrder.LITTLE_ENDIAN)
+            .asShortBuffer()
+        val samples = ShortArray(inputShort.remaining())
+        inputShort.get(samples)
+
+        val sampleRate = pitched.sampleRate
+        val carrierFreq = 40.0        // Hz - classic metallic robotic resonance
+        val modulationDepth = 0.6     // 0.0-1.0; higher = more metallic
+        val twoPi = 2.0 * Math.PI
+
+        for (i in samples.indices) {
+            val phase = twoPi * carrierFreq * i / sampleRate
+            val carrier = Math.sin(phase)
+
+            val modulated = samples[i] * (1.0 + modulationDepth * carrier)
+            samples[i] = modulated
+                .coerceIn(Short.MIN_VALUE.toDouble(), Short.MAX_VALUE.toDouble())
+                .toInt().toShort()
+        }
+
+        val outBytes = ByteArray(samples.size * 2)
+        ByteBuffer.wrap(outBytes).order(ByteOrder.LITTLE_ENDIAN)
+            .asShortBuffer().put(samples)
+
+        return PcmAudio(
+            sampleRate = pitched.sampleRate,
+            channelCount = pitched.channelCount,
             pcmBytes = outBytes
         )
     }

@@ -21,7 +21,7 @@ interface AudioFilterDrawerProps {
     filterOptions?: string[];
 }
 
-const DEFAULT_FILTER_OPTIONS = ['Original', 'Slow', 'Fast', 'Chipmunk', 'Baby', 'Deep', 'Anonymous', 'Robot', 'Echo'];
+const DEFAULT_FILTER_OPTIONS = ['Original', 'Slow', 'Fast', 'Chipmunk', 'Baby', 'Robot', 'Echo', 'Hacker'];
 
 const formatTime = (ms: number): string => {
     const totalSeconds = Math.floor(ms / 1000);

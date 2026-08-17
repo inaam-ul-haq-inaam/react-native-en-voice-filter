@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 | `titleText` | `string` | `'Voice Filters'` | Title text of the filter drawer. |
 | `playerTitleText` | `string` | `'Recorded Audio'` | Player title text in the filter drawer. |
 | `processingText` | `string` | `'Applying filter...'` | Processing/loading text in the filter drawer. |
-| `filterOptions` | `string[]` | `['Original', 'Robot', 'Deep', 'Echo']` | List of filter options shown as chips. |
+| `filterOptions` | `string[]` | `['Original', 'Slow', 'Fast', 'Chipmunk', 'Baby', 'Robot', 'Echo', 'Hacker']` | List of filter options shown as chips. |
 
 ## Contributing
 
