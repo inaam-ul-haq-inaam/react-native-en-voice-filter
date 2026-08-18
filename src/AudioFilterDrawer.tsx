@@ -73,7 +73,6 @@ export const AudioFilterDrawer = ({
     const [currentPosition, setCurrentPosition] = useState(0);
     const [duration, setDuration] = useState(0);
     const [selectedFilter, setSelectedFilter] = useState('Original');
-    const [filteredPath, setFilteredPath] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [appliedFilter, setAppliedFilter] = useState<string | null>(null);
 
@@ -118,7 +117,6 @@ export const AudioFilterDrawer = ({
             setDuration(0);
             durationRef.current = 0;
             setSelectedFilter(initialFilter || 'Original');
-            setFilteredPath(null);
             pathRef.current = null;
             setAppliedFilter(null);
             setIsProcessing(false);
@@ -196,7 +194,6 @@ export const AudioFilterDrawer = ({
 
             const type = filter === 'Original' ? 'ORIGINAL' : filter.toUpperCase();
             const result = await NativeVoiceFilter.applyFilter(audioPath, type);
-            setFilteredPath(result);
             pathRef.current = result;
             setAppliedFilter(filter);
 
