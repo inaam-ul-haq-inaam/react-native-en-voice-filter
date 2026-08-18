@@ -8,15 +8,21 @@ const MarqueeText = ({ text, width = 50 }: { text: string; width?: number }) => 
     const animatedValue = useRef(new Animated.Value(width)).current;
 
     useEffect(() => {
-        Animated.loop(
+        animatedValue.setValue(width);
+        const animation = Animated.loop(
             Animated.timing(animatedValue, {
                 toValue: -width,
                 duration: 4000,
                 easing: Easing.linear,
                 useNativeDriver: true,
             })
-        ).start();
-    }, [text, width]);
+        );
+        animation.start();
+
+        return () => {
+            animation.stop();
+        };
+    }, [text, width, animatedValue]);
 
     return (
         <View style={{ width, overflow: 'hidden', marginTop: 4 }}>
