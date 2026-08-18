@@ -1,13 +1,36 @@
 import { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, PermissionsAndroid, Platform, Animated, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NativeVoiceFilter from './NativeVoiceFilter';
 import { AudioFilterDrawer } from './AudioFilterDrawer';
 
+const MarqueeText = ({ text, width = 50 }: { text: string; width?: number }) => {
+    const animatedValue = useRef(new Animated.Value(width)).current;
+
+    useEffect(() => {
+        Animated.loop(
+            Animated.timing(animatedValue, {
+                toValue: -width,
+                duration: 4000,
+                easing: Easing.linear,
+                useNativeDriver: true,
+            })
+        ).start();
+    }, [text, width]);
+
+    return (
+        <View style={{ width, overflow: 'hidden', marginTop: 4 }}>
+            <Animated.Text style={{ fontSize: 10, color: '#0c0707ff', width: width * 2, transform: [{ translateX: animatedValue }] }} numberOfLines={1}>
+                {text}
+            </Animated.Text>
+        </View>
+    );
+};
 
 interface VoiceRecorderProps {
     onRecordComplete?: (audioPath: string) => void;
     onConfirm?: (audioPath: string) => void;
+    onDelete?: () => void;
     micIconColor?: string;
     micIconName?: string;
     attachedIconName?: string;
@@ -53,6 +76,7 @@ interface VoiceRecorderProps {
 export const VoiceRecorder = ({
     onRecordComplete,
     onConfirm,
+    onDelete,
     micIconColor = '#030109',
     micIconName = 'mic',
     attachedIconName = 'musical-notes',
@@ -168,6 +192,9 @@ export const VoiceRecorder = ({
     const handleDelete = () => {
         setRecordedPath(null);
         setShowActions(false);
+        if (onDelete) {
+            onDelete();
+        }
     };
 
     const handleEdit = () => {
@@ -203,50 +230,54 @@ export const VoiceRecorder = ({
 
             {/*Audio Attached*/}
             {recordedPath !== null && !showActions && (
-                <TouchableOpacity
-                    style={[styles.micButton, { backgroundColor: attachedButtonColor }]}
-                    onPress={() => setShowActions(true)}
-                >
-                    <Icon name={attachedIconName} size={22} color={attachedIconColor} />
-                </TouchableOpacity>
+                <View style={{ alignItems: 'center' }}>
+                    <TouchableOpacity
+                        style={[styles.micButton, { backgroundColor: attachedButtonColor }]}
+                        onPress={() => setShowActions(true)}
+                    >
+                        <Icon name={attachedIconName} size={22} color={attachedIconColor} />
+                    </TouchableOpacity>
+                    <MarqueeText text={selectedFilter} width={44} />
+                </View>
             )}
 
             {/* Inline action menu */}
             {recordedPath !== null && showActions && (
                 <>
-               
-                <TouchableOpacity
-                    style={styles.overlay}
-                    activeOpacity={1}
-                    onPress={() => setShowActions(false)}
-                />
-                <View style={{position:'absolute',alignItems:'center',top:0,zIndex:20}}>
+
                     <TouchableOpacity
-                    style={[styles.micButton, { backgroundColor: attachedButtonColor }]}
-                    onPress={() => setShowActions(true)}
-                >
-                    <Icon name={attachedIconName} size={22} color={attachedIconColor} />
-                </TouchableOpacity>
-
-                <View style={styles.tooltipContainer}>
-                    
-                    <View style={[styles.triangle, { borderBottomColor: tooltipBackgroundColor }]} />
-                    <View style={[styles.activeLayout, { backgroundColor: tooltipBackgroundColor }]}>
-
-                        {/* Delete */}
-                        <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleDelete}>
-                            <Icon name={deleteIconName} size={actionIconSize} color={actionIconColor} />
+                        style={styles.overlay}
+                        activeOpacity={1}
+                        onPress={() => setShowActions(false)}
+                    />
+                    <View style={{ position: 'absolute', alignItems: 'center', top: 0, zIndex: 20 }}>
+                        <TouchableOpacity
+                            style={[styles.micButton, { backgroundColor: attachedButtonColor }]}
+                            onPress={() => setShowActions(true)}
+                        >
+                            <Icon name={attachedIconName} size={22} color={attachedIconColor} />
                         </TouchableOpacity>
+                        <MarqueeText text={selectedFilter} width={44} />
 
-                        <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+                        <View style={styles.tooltipContainer}>
 
-                        {/* Edit */}
-                        <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleEdit}>
-                            <Icon name={editIconName} size={actionIconSize} color={actionIconColor} />
-                        </TouchableOpacity>
+                            <View style={[styles.triangle, { borderBottomColor: tooltipBackgroundColor }]} />
+                            <View style={[styles.activeLayout, { backgroundColor: tooltipBackgroundColor }]}>
+
+                                {/* Delete */}
+                                <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleDelete}>
+                                    <Icon name={deleteIconName} size={actionIconSize} color={actionIconColor} />
+                                </TouchableOpacity>
+
+                                <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+
+                                {/* Edit */}
+                                <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleEdit}>
+                                    <Icon name={editIconName} size={actionIconSize} color={actionIconColor} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
-                </View>
-                </View>
                 </>
             )}
 
