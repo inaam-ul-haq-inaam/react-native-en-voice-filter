@@ -175,10 +175,6 @@ export const VoiceRecorder = ({
         setIsDrawerVisible(true);
     };
 
-    const handleCancel = () => {
-        setShowActions(false);
-    };
-
     const handleConfirm = (path: string, filter: string) => {
         console.log("Voice filter confirmed, audio path:", path, "filter:", filter);
         setRecordedPath(path);
@@ -217,7 +213,14 @@ export const VoiceRecorder = ({
 
             {/* Inline action menu */}
             {recordedPath !== null && showActions && (
-                <View style={{position:'absolute',alignItems:'center',top:0}}>
+                <>
+               
+                <TouchableOpacity
+                    style={styles.overlay}
+                    activeOpacity={1}
+                    onPress={() => setShowActions(false)}
+                />
+                <View style={{position:'absolute',alignItems:'center',top:0,zIndex:20}}>
                     <TouchableOpacity
                     style={[styles.micButton, { backgroundColor: attachedButtonColor }]}
                     onPress={() => setShowActions(true)}
@@ -241,16 +244,10 @@ export const VoiceRecorder = ({
                         <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleEdit}>
                             <Icon name={editIconName} size={actionIconSize} color={actionIconColor} />
                         </TouchableOpacity>
-
-                        <View style={[styles.divider, { backgroundColor: dividerColor }]} />
-
-                        {/* Cancel */}
-                        <TouchableOpacity style={[styles.circleBtn, { backgroundColor: actionButtonColor }]} onPress={handleCancel}>
-                            <Icon name={cancelIconName} size={actionIconSize} color={actionIconColor} />
-                        </TouchableOpacity>
                     </View>
                 </View>
                 </View>
+                </>
             )}
 
             {isRecording && (
@@ -299,6 +296,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'relative',
         zIndex: 10,
+        overflow: 'visible',
+    },
+    overlay: {
+        position: 'absolute',
+        top: -10000,
+        bottom: -10000,
+        left: -10000,
+        right: -10000,
+        zIndex: 15,
     },
     micButton: {
         width: 44,

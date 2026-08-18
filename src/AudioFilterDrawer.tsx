@@ -73,8 +73,9 @@ export const AudioFilterDrawer = ({
     const [currentPosition, setCurrentPosition] = useState(0);
     const [duration, setDuration] = useState(0);
     const [selectedFilter, setSelectedFilter] = useState('Original');
-    const [, setFilteredPath] = useState<string | null>(null);
+    const [filteredPath, setFilteredPath] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [appliedFilter, setAppliedFilter] = useState<string | null>(null);
 
     const isPlayingRef = useRef(false);
     const durationRef = useRef(0);
@@ -119,6 +120,7 @@ export const AudioFilterDrawer = ({
             setSelectedFilter(initialFilter || 'Original');
             setFilteredPath(null);
             pathRef.current = null;
+            setAppliedFilter(null);
             setIsProcessing(false);
 
             // Fetch duration of Audio 
@@ -167,6 +169,23 @@ export const AudioFilterDrawer = ({
     const selectFilter = async (filter: string) => {
         if (!audioPath) return;
         setSelectedFilter(filter);
+
+        // If this filter is already applied, just play the existing audio
+        if (appliedFilter === filter && pathRef.current) {
+            NativeVoiceFilter.stopPlayback();
+            NativeVoiceFilter.playRecording(pathRef.current);
+            isPlayingRef.current = true;
+            setIsPlaying(true);
+            setCurrentPosition(0);
+
+            const dur = NativeVoiceFilter.getDuration();
+            if (dur > 0) {
+                durationRef.current = dur;
+                setDuration(dur);
+            }
+            return;
+        }
+
         setIsProcessing(true);
 
         try {
@@ -179,6 +198,20 @@ export const AudioFilterDrawer = ({
             const result = await NativeVoiceFilter.applyFilter(audioPath, type);
             setFilteredPath(result);
             pathRef.current = result;
+            setAppliedFilter(filter);
+
+            // Auto-play the filtered audio
+            NativeVoiceFilter.stopPlayback();
+            NativeVoiceFilter.playRecording(result);
+            isPlayingRef.current = true;
+            setIsPlaying(true);
+            setCurrentPosition(0);
+
+            const dur = NativeVoiceFilter.getDuration();
+            if (dur > 0) {
+                durationRef.current = dur;
+                setDuration(dur);
+            }
         } catch (e) {
             console.error("Filter error", e);
         } finally {

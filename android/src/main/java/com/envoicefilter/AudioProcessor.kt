@@ -23,7 +23,7 @@ enum class FilterType(
     FAST(1.0f, 1.6f, 1.0f),
     CHIPMUNK(2.5f, 1.5f, 1.0f),
     BABY(2.0f, 1.0f, 1.0f),
-    ROBOT(0.9f, 0.9f, 1.0f, 1.0f, true),
+    ROBOT(0.6f, 1.0f, 1.0f, 1.0f, false),
     ECHO(1.0f, 1.0f, 1.0f),
     HACKER(0.7f, 1.0f, 1.0f)
 }
@@ -145,14 +145,14 @@ class AudioProcessor {
     }
 
     // ------------------------------------------------------------------
-    // Robot effect: slight pitch shift + ring modulator (40 Hz carrier)
+    // Robot effect: pitch shift + ring modulator (120 Hz carrier)
     // ------------------------------------------------------------------
 
     private fun applyRobot(input: PcmAudio): PcmAudio {
-        // Stage 1: Slight pitch-down for robotic depth (existing Sonic params)
+        // Stage 1: Pitch-down for deep robotic voice
         val pitched = applyPitchShift(input, FilterType.ROBOT)
 
-        // Stage 2: Ring modulator - multiply samples by a 40 Hz sine-wave LFO
+        // Stage 2: Ring modulator - multiply samples by a 120 Hz sine-wave LFO
         val inputShort = ByteBuffer.wrap(pitched.pcmBytes)
             .order(ByteOrder.LITTLE_ENDIAN)
             .asShortBuffer()
@@ -160,8 +160,8 @@ class AudioProcessor {
         inputShort.get(samples)
 
         val sampleRate = pitched.sampleRate
-        val carrierFreq = 40.0        // Hz - classic metallic robotic resonance
-        val modulationDepth = 0.6     // 0.0-1.0; higher = more metallic
+        val carrierFreq = 120.0       // Hz - higher for more metallic robotic resonance
+        val modulationDepth = 0.7     // 0.0-1.0; higher = more metallic
         val twoPi = 2.0 * Math.PI
 
         for (i in samples.indices) {
